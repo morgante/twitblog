@@ -10,6 +10,7 @@
 	
 	<requires>
 		<feature url="http://wiki.habariproject.org/en/feature/microblog">microblog</feature>
+		<feature url="http://wiki.habariproject.org/en/feature/twitter">twitter</feature>
 	</requires>
 	
 </pluggable>

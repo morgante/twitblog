@@ -22,7 +22,109 @@ class TwitBlog extends Plugin
 		}
 		
 		return $array;
-	}	
+	}
+	
+	/**
+	 * Add twittername to user options
+	 */
+	public function action_form_user($form, $edit_user)
+	{
+		$userid = $form->user_info->append( 'text', 'twittername', 'null:null', _t( 'Twitter Username'), 'optionscontrol_text' );
+		$userid->class[] = 'item clear';
+		$userid->value = $edit_user->info->twitter__name;
+	}
+	
+	/**
+	 * set twittername user option
+	 */
+	public function filter_form_user_update($update, $form, $edit_user)
+	{
+		if($form->twittername->value != $edit_user->info->twitter__name)
+		{
+			$edit_user->info->twitter__name = $form->twittername->value;
+			return true;
+		}
+		return $update;
+	}
+	
+	/**
+	 * Allow twitter send service
+	 **/
+	public function filter_microblog__send_services( $services )
+	{
+		$services['twitter'] = false;
+		return $services;
+	}
+	
+	/**
+	 * Allow twitter link service
+	 **/
+	public function filter_microblog__link_services( $services )
+	{
+		$services['twitter'] = false;
+		return $services;
+	}
+	
+	/**
+	 * Allow twitter copy service
+	 **/
+	public function filter_microblog__copy_services( $services )
+	{
+		$services['twitter'] = false;
+		return $services;
+	}
+	
+	/**
+	 * Add our handlers for twitter
+	 **/
+	public function filter_microblog__servicehandlers( $handlers )
+	{
+		$handlers['twitter'] = array(
+			'send' => array( $this, 'send_post'),
+			'name' => array( $this, 'service_name'),
+			'copy' => array( $this, 'copy_post')
+		);
+		
+		return $handlers;
+	}
+	
+	/**
+	 * Provide the name for Twitter service
+	 */
+	public function service_name()
+	{
+		return 'Twitter';
+	}
+	
+	/**
+	 * Send a micropost to Twitter
+	 */
+	public function send_post( $post )
+	{
+				
+		require_once dirname(__FILE__) . '/../twitter/lib/twitteroauth/twitteroauth.php';
+		$user = User::get_by_id($post->user_id);
+		
+		$oauth = new TwitterOAuth(Twitter::CONSUMER_KEY_WRITE, Twitter::CONSUMER_SECRET_WRITE, $user->info->twitter__access_token, $user->info->twitter__access_token_secret);
+		
+		$oauth->post('statuses/update', array('status' => $post->content));
+		
+		Session::notice(_t('Post Tweeted', 'twitter'));
+		
+		// exit;
+
+	}
+	
+	public function copy_post( $user )
+	{
+		$class = new Twitter;
+		
+		$username = $user->info->twitter__name;
+		
+		$tweets = $class->tweets( $username, false, 5, 0, false );
+		return $tweets;
+	}
+	
 }
 
 ?>
