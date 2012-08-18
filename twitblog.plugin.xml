@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="utf-8" ?> 
+<pluggable type="plugin"> 
+	<name>TwitBlog</name> 
+	<license url="http://www.apache.org/licenses/LICENSE-2.0.html">Apache Software License 2.0</license> 
+	<author url="http://morgante.net/">Morgante Pell</author> 
+	<version>0.1</version> 
+	<url>http://lab.morgante.net/twitblog</url> 
+	<description><![CDATA[Enables the microblog plugin to interact with Twitter.]]></description> 
+	<copyright>2012</copyright>
+	
+	<requires>
+		<feature url="http://wiki.habariproject.org/en/feature/microblog">microblog</feature>
+	</requires>
+	
+</pluggable>
