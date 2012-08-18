@@ -9,22 +9,6 @@ class TwitBlog extends Plugin
 	}
 	
 	/**
-	 * Link usernames in microposts to twitter accounts 
-	 **/
-	public function filter_microblog_userlink( $array, $micropost )
-	{
-		$handled = $array[0];
-		$username = $array[1];
-		
-		if( !$handled )
-		{
-			return array( true, 'http://twitter.com/' . $username) ;
-		}
-		
-		return $array;
-	}
-	
-	/**
 	 * Add twittername to user options
 	 */
 	public function action_form_user($form, $edit_user)
@@ -82,6 +66,7 @@ class TwitBlog extends Plugin
 		$handlers['twitter'] = array(
 			'send' => array( $this, 'send_post'),
 			'name' => array( $this, 'service_name'),
+			'link' => array( $this, 'linkify'),
 			'copy' => array( $this, 'copy_post')
 		);
 		
@@ -94,6 +79,19 @@ class TwitBlog extends Plugin
 	public function service_name()
 	{
 		return 'Twitter';
+	}
+	
+	
+	/**
+	 * Provide the name for Twitter service
+	 */
+	public function linkify( $type, $given )
+	{
+		switch( $type )
+		{
+			case 'user':
+				return 'http://twitter.com/' . $given; // @TODO: make this check if that user actually exists
+		}
 	}
 	
 	/**
