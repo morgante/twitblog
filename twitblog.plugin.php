@@ -99,11 +99,10 @@ class TwitBlog extends Plugin
 	/**
 	 * Send a micropost to Twitter
 	 */
-	public function send_post( $post )
+	public function send_post( $post, $user )
 	{
 				
 		require_once dirname(__FILE__) . '/../twitter/lib/twitteroauth/twitteroauth.php';
-		$user = User::get_by_id($post->user_id);
 		
 		$oauth = new TwitterOAuth(Twitter::CONSUMER_KEY_WRITE, Twitter::CONSUMER_SECRET_WRITE, $user->info->twitter__access_token, $user->info->twitter__access_token_secret);
 		
@@ -122,6 +121,12 @@ class TwitBlog extends Plugin
 		$username = $user->info->twitter__name;
 		
 		$tweets = $class->tweets( $username, false, 5, 0, false );
+				
+		if( !isset( $tweets[0]->id ) ) // no tweets available
+		{
+			return array();
+		}
+		
 		return $tweets;
 	}
 	
